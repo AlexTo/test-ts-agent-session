@@ -1,0 +1,28 @@
+{
+  "name": "@my-agent-project/website",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ag-ui/client": "catalog:",
+    "@aws-sdk/credential-provider-cognito-identity": "catalog:",
+    "@copilotkit/react-core": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-query-devtools": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/tanstack-react-query": "catalog:",
+    "aws4fetch": "catalog:",
+    "lucide-react": "catalog:",
+    "oidc-client-ts": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-oidc-context": "catalog:",
+    "tailwindcss": "catalog:",
+    "@my-agent-project/agents": "workspace:*",
+    "@my-agent-project/common-shadcn": "workspace:*"
+  },
+  "devDependencies": {
+    "@smithy/types": "catalog:"
+  }
+}

@@ -1,0 +1,27 @@
+[project]
+name = "nx-workspace"
+version = "1.0.0"
+dependencies = [
+  "my-agent-project-agent-connection",
+  "my-agent-project-py-agents"
+]
+
+[tool.uv.workspace]
+members = [ "packages/common/agent_connection", "packages/py_agents" ]
+
+[tool.uv.sources.my-agent-project-agent-connection]
+workspace = true
+
+[tool.uv.sources.my-agent-project-py-agents]
+workspace = true
+
+[dependency-groups]
+dev = [
+  "ruff==0.15.22",
+  "autopep8>=2.3.1",
+  "pytest>=8.3.4",
+  "pytest-sugar>=1.0.0",
+  "pytest-cov>=6.0.0",
+  "pytest-html>=4.1.1",
+  "ty==0.0.61"
+]

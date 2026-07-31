@@ -1,0 +1,40 @@
+{
+  "name": "@my-agent-project/agents",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@a2a-js/sdk": "catalog:",
+    "@ag-ui/a2ui-toolkit": "catalog:",
+    "@ag-ui/aws-strands": "catalog:",
+    "@ag-ui/client": "catalog:",
+    "@ag-ui/core": "catalog:",
+    "@ag-ui/encoder": "catalog:",
+    "@aws-lambda-powertools/parameters": "catalog:",
+    "@aws-sdk/client-appconfigdata": "catalog:",
+    "@aws-sdk/credential-providers": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@strands-agents/sdk": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "aws4fetch": "catalog:",
+    "cors": "catalog:",
+    "express": "catalog:",
+    "tslib": "^2.3.0",
+    "ws": "catalog:",
+    "zod": "catalog:",
+    "@my-agent-project/agent-connection": "workspace:*"
+  },
+  "devDependencies": {
+    "@a2a-js/sdk": "catalog:",
+    "@aws-lambda-powertools/parameters": "catalog:",
+    "@aws-sdk/client-appconfigdata": "catalog:",
+    "@aws-sdk/credential-providers": "catalog:",
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "@types/ws": "catalog:",
+    "agent-chat-cli": "catalog:",
+    "aws4fetch": "catalog:"
+  }
+}

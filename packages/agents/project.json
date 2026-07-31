@@ -1,0 +1,440 @@
+{
+  "name": "@my-agent-project/agents",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/agents/src",
+  "projectType": "library",
+  "tags": [],
+  "metadata": {
+    "generator": "ts#project",
+    "ports": [8081, 9000, 8082, 8000],
+    "components": [
+      {
+        "generator": "ts#agent",
+        "path": "src/http-agent",
+        "name": "http-agent",
+        "port": 8081,
+        "rc": "HttpAgent",
+        "auth": "iam",
+        "protocol": "http"
+      },
+      {
+        "generator": "ts#agent",
+        "path": "src/a2a-agent",
+        "name": "a2a-agent",
+        "port": 9000,
+        "rc": "A2aAgent",
+        "auth": "iam",
+        "protocol": "a2a"
+      },
+      {
+        "generator": "ts#agent",
+        "path": "src/agui-agent",
+        "name": "agui-agent",
+        "port": 8082,
+        "rc": "AguiAgent",
+        "auth": "iam",
+        "protocol": "ag-ui"
+      },
+      {
+        "generator": "ts#mcp-server",
+        "path": "src/mcp-server",
+        "name": "mcp-server",
+        "port": 8000,
+        "rc": "AgentsMcpServer",
+        "auth": "iam"
+      }
+    ]
+  },
+  "targets": {
+    "a2a-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/a2a-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:9000"
+        }
+      }
+    },
+    "a2a-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/a2a-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9000",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "a2a-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/a2a-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/a2a-agent/Dockerfile dist/packages/agents/bundle/agent/a2a-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-a2a-agent:latest dist/packages/agents/bundle/agent/a2a-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "a2a-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/a2a-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9000"
+        }
+      }
+    },
+    "a2a-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-a2a-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["a2a-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-a2a-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-a2a-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-a2a-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-a2a-agent-latest/image-0.tar my-agent-project-a2a-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-a2a-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "agui-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/agui-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:8082/invocations"
+        }
+      }
+    },
+    "agui-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "a2a-agent-dev"
+        },
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/agui-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8082",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "agui-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/agui-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/agui-agent/Dockerfile dist/packages/agents/bundle/agent/agui-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-agui-agent:latest dist/packages/agents/bundle/agent/agui-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "agui-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/agui-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8082"
+        }
+      }
+    },
+    "agui-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-agui-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["agui-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-agui-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-agui-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-agui-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-agui-agent-latest/image-0.tar my-agent-project-agui-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-agui-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "build": {
+      "dependsOn": ["lint", "compile", "test", "bundle", "docker"]
+    },
+    "bundle": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["compile"],
+      "cache": true,
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/bundle"],
+      "options": {
+        "command": "rolldown -c rolldown.config.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "compile": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/tsc"],
+      "options": {
+        "command": "tsc --build tsconfig.lib.json",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "dependsOn": [
+        "http-agent-dev",
+        "a2a-agent-dev",
+        "agui-agent-dev",
+        "mcp-server-dev"
+      ],
+      "continuous": true
+    },
+    "docker": {
+      "dependsOn": [
+        "http-agent-docker",
+        "a2a-agent-docker",
+        "agui-agent-docker",
+        "mcp-server-docker"
+      ]
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["biome"],
+      "options": {
+        "command": "biome format {projectRoot}"
+      },
+      "configurations": {
+        "fix": {
+          "command": "biome format --write {projectRoot}"
+        },
+        "skip-lint": {
+          "command": "node -e \"\""
+        }
+      }
+    },
+    "http-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/http-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "ws://localhost:8081/ws"
+        }
+      }
+    },
+    "http-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "a2a-agent-dev"
+        },
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/http-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8081",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "http-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/http-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/http-agent/Dockerfile dist/packages/agents/bundle/agent/http-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-http-agent:latest dist/packages/agents/bundle/agent/http-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "http-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/http-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8081"
+        }
+      }
+    },
+    "http-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-http-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["http-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-http-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-http-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-http-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-http-agent-latest/image-0.tar my-agent-project-http-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-http-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["biome"],
+      "dependsOn": ["format"],
+      "options": {
+        "command": "biome lint {projectRoot}"
+      },
+      "configurations": {
+        "fix": {
+          "command": "biome check --write {projectRoot}"
+        },
+        "skip-lint": {
+          "command": "node -e \"\""
+        }
+      }
+    },
+    "mcp-server-dev": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/mcp-server/http.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8000",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "mcp-server-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/mcp/agents-mcp-server/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/mcp-server/Dockerfile dist/packages/agents/bundle/mcp/agents-mcp-server/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-agents-mcp-server:latest dist/packages/agents/bundle/mcp/agents-mcp-server"
+        ],
+        "parallel": false
+      }
+    },
+    "mcp-server-inspect": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["mcp-server-dev"],
+      "options": {
+        "commands": [
+          "mcp-inspector --transport http --server-url http://localhost:8000/mcp"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-inspect-stdio": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["mcp-inspector -- tsx --watch ./src/mcp-server/stdio.ts"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/mcp-server/http.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8000"
+        }
+      }
+    },
+    "mcp-server-serve-stdio": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/mcp-server/stdio.ts"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["mcp-server-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest/image-0.tar my-agent-project-agents-mcp-server:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-agents-mcp-server-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "trivy": {
+      "dependsOn": [
+        "http-agent-trivy",
+        "a2a-agent-trivy",
+        "agui-agent-trivy",
+        "mcp-server-trivy"
+      ]
+    }
+  }
+}

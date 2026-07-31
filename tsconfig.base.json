@@ -5,7 +5,9 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
+    "lib": [
+      "es2022"
+    ],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noEmitOnError": true,
@@ -16,6 +18,32 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@my-agent-project/source"]
+    "customConditions": [
+      "@my-agent-project/source"
+    ],
+    "rootDir": ".",
+    "paths": {
+      "@my-agent-project/agents": [
+        "./packages/agents/src/index.ts"
+      ],
+      "@my-agent-project/agent-connection": [
+        "./packages/common/agent-connection/src/index.ts"
+      ],
+      "@my-agent-project/common-constructs": [
+        "./packages/common/constructs/src/index.ts"
+      ],
+      "@my-agent-project/website": [
+        "./packages/website/src/index.ts"
+      ],
+      "@my-agent-project/common-shadcn": [
+        "./packages/common/shadcn/src/index.ts"
+      ],
+      "@my-agent-project/common-shadcn/*": [
+        "./packages/common/shadcn/src/*"
+      ],
+      "@my-agent-project/agents/*": [
+        "./packages/agents/*"
+      ]
+    }
   }
 }

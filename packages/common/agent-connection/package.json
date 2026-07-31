@@ -1,0 +1,16 @@
+{
+  "name": "@my-agent-project/agent-connection",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@a2a-js/sdk": "catalog:",
+    "@aws-lambda-powertools/parameters": "catalog:",
+    "@aws-sdk/credential-providers": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@strands-agents/sdk": "catalog:",
+    "aws4fetch": "catalog:",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {}
+}

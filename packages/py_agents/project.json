@@ -1,0 +1,574 @@
+{
+  "name": "my_agent_project.py_agents",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/py_agents/my_agent_project_py_agents",
+  "release": {
+    "version": {
+      "versionActions": "@nxlv/python/release/version-actions"
+    }
+  },
+  "tags": [],
+  "metadata": {
+    "generator": "py#project",
+    "ports": [8083, 9001, 8084, 8001],
+    "components": [
+      {
+        "generator": "py#agent",
+        "path": "my_agent_project_py_agents/py_http_agent",
+        "name": "py-http-agent",
+        "port": 8083,
+        "rc": "PyHttpAgent",
+        "auth": "iam",
+        "protocol": "http",
+        "framework": "strands"
+      },
+      {
+        "generator": "py#agent",
+        "path": "my_agent_project_py_agents/py_a2a_agent",
+        "name": "py-a2a-agent",
+        "port": 9001,
+        "rc": "PyA2aAgent",
+        "auth": "iam",
+        "protocol": "a2a",
+        "framework": "strands"
+      },
+      {
+        "generator": "py#agent",
+        "path": "my_agent_project_py_agents/py_agui_agent",
+        "name": "py-agui-agent",
+        "port": 8084,
+        "rc": "PyAguiAgent",
+        "auth": "iam",
+        "protocol": "ag-ui",
+        "framework": "strands"
+      },
+      {
+        "generator": "py#mcp-server",
+        "path": "my_agent_project_py_agents/mcp_server",
+        "name": "mcp-server",
+        "port": 8001,
+        "rc": "PyAgentsMcpServer",
+        "auth": "iam"
+      }
+    ]
+  },
+  "targets": {
+    "add": {
+      "executor": "@nxlv/python:add",
+      "options": {}
+    },
+    "build": {
+      "dependsOn": ["lint", "compile", "test", "typecheck", "bundle", "docker"],
+      "inputs": ["default", "^production"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}"
+      }
+    },
+    "bundle": {
+      "dependsOn": ["bundle-arm"]
+    },
+    "bundle-arm": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["compile"],
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/bundle-arm"],
+      "options": {
+        "commands": [
+          "uv export --frozen --no-dev --no-editable --project {projectRoot} --package my_agent_project.py_agents -o dist/{projectRoot}/bundle-arm/requirements.txt",
+          "uv pip install -n --no-deps --no-installer-metadata --no-compile-bytecode --python-platform aarch64-manylinux_2_28 --target dist/{projectRoot}/bundle-arm -r dist/{projectRoot}/bundle-arm/requirements.txt"
+        ],
+        "parallel": false
+      }
+    },
+    "compile": {
+      "executor": "@nxlv/python:build",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/build"],
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}/build",
+        "publish": false,
+        "lockedVersions": true,
+        "bundleLocalDependencies": true,
+        "ignorePaths": [
+          ".venv",
+          ".tox",
+          "tests",
+          "__pycache__",
+          ".coverage",
+          ".coverage.*",
+          ".pytest_cache",
+          "pytest-cache-files-*",
+          ".ruff_cache"
+        ]
+      }
+    },
+    "dev": {
+      "dependsOn": [
+        "py-http-agent-dev",
+        "py-a2a-agent-dev",
+        "py-agui-agent-dev",
+        "mcp-server-dev"
+      ],
+      "continuous": true
+    },
+    "docker": {
+      "dependsOn": [
+        "py-http-agent-docker",
+        "py-a2a-agent-docker",
+        "py-agui-agent-docker",
+        "mcp-server-docker"
+      ]
+    },
+    "format": {
+      "executor": "@nxlv/python:ruff-format",
+      "outputs": [],
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "options": {
+        "filePatterns": ["my_agent_project_py_agents", "tests"],
+        "check": true
+      },
+      "configurations": {
+        "fix": {
+          "check": false
+        },
+        "skip-lint": {
+          "check": false
+        }
+      }
+    },
+    "install": {
+      "executor": "@nxlv/python:install",
+      "options": {
+        "silent": false,
+        "args": "",
+        "verbose": false,
+        "debug": false
+      }
+    },
+    "lint": {
+      "executor": "@nxlv/python:ruff-check",
+      "dependsOn": ["format"],
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [],
+      "options": {
+        "lintFilePatterns": ["my_agent_project_py_agents", "tests"]
+      },
+      "configurations": {
+        "fix": {
+          "fix": true
+        },
+        "skip-lint": {
+          "exitZero": true
+        }
+      }
+    },
+    "lock": {
+      "executor": "@nxlv/python:lock",
+      "options": {
+        "update": false
+      }
+    },
+    "mcp-server-dev": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run uvicorn --reload my_agent_project_py_agents.mcp_server.http:app --host 0.0.0.0 --port 8001"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8001",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "mcp-server-docker": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle-arm"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/docker/py-agents-mcp-server",
+          "make-dir dist/packages/py_agents/docker/py-agents-mcp-server",
+          "ncp dist/packages/py_agents/bundle-arm dist/packages/py_agents/docker/py-agents-mcp-server",
+          "ncp packages/py_agents/my_agent_project_py_agents/mcp_server/Dockerfile dist/packages/py_agents/docker/py-agents-mcp-server/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-py-agents-mcp-server:latest dist/packages/py_agents/docker/py-agents-mcp-server"
+        ],
+        "parallel": false
+      }
+    },
+    "mcp-server-inspect": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["mcp-server-dev"],
+      "options": {
+        "commands": [
+          "mcp-inspector --transport http --server-url http://localhost:8001/mcp"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-inspect-stdio": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "mcp-inspector -- uv run -m my_agent_project_py_agents.mcp_server.stdio"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run uvicorn --reload my_agent_project_py_agents.mcp_server.http:app --host 0.0.0.0 --port 8001"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8001"
+        }
+      }
+    },
+    "mcp-server-serve-stdio": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["uv run -m my_agent_project_py_agents.mcp_server.stdio"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mcp-server-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["mcp-server-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest",
+          "make-dir dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest",
+          "ncp packages/py_agents/.trivyignore dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest/.trivyignore",
+          "docker save -o dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest/image-0.tar my-agent-project-py-agents-mcp-server:latest",
+          "docker run --rm -v \"./dist/packages/py_agents/trivy/my-agent-project-py-agents-mcp-server-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "py-a2a-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/py-a2a-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:9001"
+        }
+      }
+    },
+    "py-a2a-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_a2a_agent/main.py --port 9001"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9001",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "py-a2a-agent-docker": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle-arm"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/docker/py-a2a-agent",
+          "make-dir dist/packages/py_agents/docker/py-a2a-agent",
+          "ncp dist/packages/py_agents/bundle-arm dist/packages/py_agents/docker/py-a2a-agent",
+          "ncp packages/py_agents/my_agent_project_py_agents/py_a2a_agent/Dockerfile dist/packages/py_agents/docker/py-a2a-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-py-a2a-agent:latest dist/packages/py_agents/docker/py-a2a-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "py-a2a-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_a2a_agent/main.py --port 9001"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9001"
+        }
+      }
+    },
+    "py-a2a-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["py-a2a-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest",
+          "make-dir dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest",
+          "ncp packages/py_agents/.trivyignore dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest/.trivyignore",
+          "docker save -o dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest/image-0.tar my-agent-project-py-a2a-agent:latest",
+          "docker run --rm -v \"./dist/packages/py_agents/trivy/my-agent-project-py-a2a-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "py-agui-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/py-agui-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:8084/invocations"
+        }
+      }
+    },
+    "py-agui-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "py-a2a-agent-dev"
+        },
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_agui_agent/main.py --port 8084"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8084",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "py-agui-agent-docker": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle-arm"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/docker/py-agui-agent",
+          "make-dir dist/packages/py_agents/docker/py-agui-agent",
+          "ncp dist/packages/py_agents/bundle-arm dist/packages/py_agents/docker/py-agui-agent",
+          "ncp packages/py_agents/my_agent_project_py_agents/py_agui_agent/Dockerfile dist/packages/py_agents/docker/py-agui-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-py-agui-agent:latest dist/packages/py_agents/docker/py-agui-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "py-agui-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_agui_agent/main.py --port 8084"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8084"
+        }
+      }
+    },
+    "py-agui-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["py-agui-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest",
+          "make-dir dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest",
+          "ncp packages/py_agents/.trivyignore dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest/.trivyignore",
+          "docker save -o dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest/image-0.tar my-agent-project-py-agui-agent:latest",
+          "docker run --rm -v \"./dist/packages/py_agents/trivy/my-agent-project-py-agui-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "py-http-agent-chat": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["py-http-agent-generate-client"],
+      "options": {
+        "commands": ["tsx ./scripts/py-http-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:8083"
+        }
+      }
+    },
+    "py-http-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "py-a2a-agent-dev"
+        },
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "mcp-server-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_http_agent/main.py --port 8083"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8083",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "py-http-agent-docker": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle-arm"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/docker/py-http-agent",
+          "make-dir dist/packages/py_agents/docker/py-http-agent",
+          "ncp dist/packages/py_agents/bundle-arm dist/packages/py_agents/docker/py-http-agent",
+          "ncp packages/py_agents/my_agent_project_py_agents/py_http_agent/Dockerfile dist/packages/py_agents/docker/py-http-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-py-http-agent:latest dist/packages/py_agents/docker/py-http-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "py-http-agent-generate-client": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["py-http-agent-openapi"],
+      "inputs": [
+        {
+          "dependentTasksOutputFiles": "**/*.json"
+        }
+      ],
+      "outputs": ["{projectRoot}/scripts/py-http-agent/generated"],
+      "options": {
+        "commands": [
+          "nx g @aws/nx-plugin:open-api#ts-client --openApiSpecPath=\"dist/packages/py_agents/openapi/py_http_agent/openapi.json\" --outputPath=\"packages/py_agents/scripts/py-http-agent/generated\" --no-interactive"
+        ]
+      }
+    },
+    "py-http-agent-openapi": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/openapi/py_http_agent"],
+      "options": {
+        "commands": [
+          "uv run python {projectRoot}/scripts/py_http_agent_openapi.py \"dist/{projectRoot}/openapi/py_http_agent/openapi.json\""
+        ]
+      }
+    },
+    "py-http-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "uv run fastapi dev my_agent_project_py_agents/py_http_agent/main.py --port 8083"
+        ],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8083"
+        }
+      }
+    },
+    "py-http-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["py-http-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest",
+          "make-dir dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest",
+          "ncp packages/py_agents/.trivyignore dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest/.trivyignore",
+          "docker save -o dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest/image-0.tar my-agent-project-py-http-agent:latest",
+          "docker run --rm -v \"./dist/packages/py_agents/trivy/my-agent-project-py-http-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "remove": {
+      "executor": "@nxlv/python:remove",
+      "options": {}
+    },
+    "sync": {
+      "executor": "@nxlv/python:sync",
+      "options": {}
+    },
+    "test": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/{projectRoot}/unittests",
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "cache": true,
+      "options": {
+        "command": "uv run pytest tests/",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "trivy": {
+      "dependsOn": [
+        "py-http-agent-trivy",
+        "py-a2a-agent-trivy",
+        "py-agui-agent-trivy",
+        "mcp-server-trivy"
+      ]
+    },
+    "typecheck": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "uv run ty check",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "update": {
+      "executor": "@nxlv/python:update",
+      "options": {}
+    }
+  }
+}

@@ -1,0 +1,62 @@
+import { StrandsAgent } from '@ag-ui/aws-strands';
+import {
+  addStrandsExpressEndpoint,
+  addPing,
+  addCapabilities,
+} from '@ag-ui/aws-strands/server';
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from 'express';
+import cors from 'cors';
+import { randomUUID } from 'node:crypto';
+import { runWithSessionId } from '@my-agent-project/agent-connection';
+import { getAgent } from './agent.js';
+
+const PORT = parseInt(process.env.PORT || '8080');
+const HOST = '0.0.0.0';
+
+const SESSION_ID_HEADER = 'x-amzn-bedrock-agentcore-runtime-session-id';
+
+// Bind the inbound session (or a fresh UUID) for downstream MCP / A2A calls.
+const sessionIdMiddleware = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const header = req.headers[SESSION_ID_HEADER];
+  const sessionId =
+    (Array.isArray(header) ? header[0] : header) ?? randomUUID();
+  runWithSessionId(sessionId, () => next());
+};
+
+void (async () => {
+  const agent = await getAgent();
+
+  // Connect MCP clients and register their tools so StrandsAgent can discover them.
+  await agent.initialize();
+
+  const aguiAgent = new StrandsAgent({
+    agent,
+    name: 'AguiAgent',
+    description: 'A Strands Agent exposed via the AG-UI protocol.',
+  });
+
+  // Built up manually (mirroring createStrandsApp's defaults) rather than via createStrandsApp
+  // https://github.com/ag-ui-protocol/ag-ui/blob/main/integrations/aws-strands/typescript/src/server.ts
+  const app = express();
+  app.use(cors({ origin: '*', credentials: true }));
+  app.use(express.json({ limit: '50mb' }));
+
+  addPing(app, '/ping');
+  addCapabilities(app, '/capabilities', { agent: aguiAgent });
+
+  app.use(sessionIdMiddleware);
+
+  addStrandsExpressEndpoint(app, aguiAgent, { path: '/invocations' });
+
+  app.listen(PORT, HOST, () => {
+    console.log(`AG-UI server listening on ${HOST}:${PORT}`);
+  });
+})();

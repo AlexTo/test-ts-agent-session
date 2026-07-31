@@ -1,0 +1,137 @@
+{
+  "name": "@my-agent-project/website",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/website/src",
+  "projectType": "application",
+  "tags": [],
+  "metadata": {
+    "generator": "ts#react-website",
+    "ux": "shadcn",
+    "framework": "react",
+    "infra": "cloudfront-s3",
+    "components": [
+      {
+        "generator": "ts#react-website#runtime-config",
+        "path": "src/components/RuntimeConfig"
+      },
+      {
+        "generator": "ts#react-website#auth",
+        "path": "src/components/CognitoAuth"
+      }
+    ]
+  },
+  "targets": {
+    "build": {
+      "dependsOn": ["lint", "compile", "test", "bundle"]
+    },
+    "bundle": {
+      "dependsOn": ["generate:py-http-agent-client"]
+    },
+    "compile": {
+      "dependsOn": ["^build", "generate:py-http-agent-client"],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}/tsc"],
+      "options": {
+        "command": "tsc --build tsconfig.app.json",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "agui-agent-dev"
+        },
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "http-agent-dev"
+        },
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "py-agui-agent-dev"
+        },
+        {
+          "projects": ["my_agent_project.py_agents"],
+          "target": "py-http-agent-dev"
+        },
+        "generate:py-http-agent-client",
+        "watch-generate:py-http-agent-client"
+      ],
+      "continuous": true,
+      "options": {
+        "command": "vite --mode local-dev",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["biome"],
+      "options": {
+        "command": "biome format {projectRoot}"
+      },
+      "configurations": {
+        "fix": {
+          "command": "biome format --write {projectRoot}"
+        },
+        "skip-lint": {
+          "command": "node -e \"\""
+        }
+      }
+    },
+    "generate:py-http-agent-client": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "inputs": [
+        {
+          "dependentTasksOutputFiles": "**/*.json"
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/packages/website/src/generated/py-http-agent"
+      ],
+      "dependsOn": ["my_agent_project.py_agents:py-http-agent-openapi"],
+      "options": {
+        "commands": [
+          "nx g @aws/nx-plugin:open-api#ts-hooks --openApiSpecPath=\"dist/packages/py_agents/openapi/py_http_agent/openapi.json\" --outputPath=\"packages/website/src/generated/py-http-agent\" --no-interactive"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["biome"],
+      "dependsOn": ["format"],
+      "options": {
+        "command": "biome lint {projectRoot}"
+      },
+      "configurations": {
+        "fix": {
+          "command": "biome check --write {projectRoot}"
+        },
+        "skip-lint": {
+          "command": "node -e \"\""
+        }
+      }
+    },
+    "load:runtime-config": {
+      "executor": "nx:run-commands",
+      "metadata": {
+        "description": "Load runtime config from your deployed stack for dev purposes. You must set your AWS CLI credentials whilst calling 'pnpm nx run @my-agent-project/website:load:runtime-config'"
+      },
+      "options": {
+        "command": "aws s3 cp s3://`aws cloudformation describe-stacks --query \"Stacks[?starts_with(StackName, 'my-agent-project-')][].Outputs[] | [?contains(OutputKey, 'WebsiteWebsiteBucketName')].OutputValue\" --output text`/runtime-config.json \"{projectRoot}/public/runtime-config.json\""
+      }
+    },
+    "watch-generate:py-http-agent-client": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": [
+          "nx watch --projects=my_agent_project.py_agents --includeDependencies -- nx run @my-agent-project/website:\"generate:py-http-agent-client\""
+        ]
+      }
+    }
+  }
+}
