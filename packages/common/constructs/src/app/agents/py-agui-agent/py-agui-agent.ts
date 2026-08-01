@@ -78,12 +78,18 @@ export class PyAguiAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      PyAguiAgent: this.agentCoreRuntime.agentRuntimeArn,
+      PyAguiAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
 
     rc.set('connection', 'agentRuntimes', {
       ...rc.get('connection').agentRuntimes,
-      PyAguiAgent: this.agentCoreRuntime.agentRuntimeArn,
+      PyAguiAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

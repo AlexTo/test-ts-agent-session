@@ -18,7 +18,8 @@ class PyAgentsMcpServerClientStrands:
         if os.environ.get("LOCAL_DEV") == "true":
             return AgentCoreMCPClientStrands.without_auth("http://localhost:8001/mcp")
         config = get_agentcore_runtime_config()
-        agent_runtime_arn = config.get("agentRuntimes", {}).get("PyAgentsMcpServer")
+        agent_runtime = config.get("agentRuntimes", {}).get("PyAgentsMcpServer")
+        agent_runtime_arn = agent_runtime.get("arn") if agent_runtime else None
         if not agent_runtime_arn:
             raise RuntimeError(
                 "No connected MCP server runtime named 'PyAgentsMcpServer' found in runtime configuration."

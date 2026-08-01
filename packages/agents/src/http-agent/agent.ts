@@ -5,6 +5,7 @@ import {
   A2aAgentClientStrands,
   AgentsMcpServerClientStrands,
 } from '@my-agent-project/agent-connection';
+import { getSessionManager } from './session.js';
 import { z } from 'zod';
 
 const multiply = tool({
@@ -28,6 +29,7 @@ export const getAgent = async () => {
     callback: async ({ prompt }) => (await a2aAgent.invoke(prompt)).toString(),
   });
   const agent = new Agent({
+    sessionManager: await getSessionManager(),
     systemPrompt: `You are a mathematical wizard.
   Use your tools for mathematical tasks.
   Refer to tools as your 'spellbook'.`,

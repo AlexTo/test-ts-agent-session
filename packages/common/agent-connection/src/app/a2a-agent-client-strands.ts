@@ -11,7 +11,7 @@ export class A2aAgentClientStrands {
       });
     }
     const config = await getAgentCoreRuntimeConfig();
-    const agentRuntimeArn = config.agentRuntimes?.['A2aAgent'];
+    const agentRuntimeArn = config.agentRuntimes?.['A2aAgent']?.arn;
     if (!agentRuntimeArn) {
       throw new Error(
         `No connected agent runtime named 'A2aAgent' found in runtime configuration.`,

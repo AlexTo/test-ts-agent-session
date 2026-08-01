@@ -37,9 +37,10 @@ export const HttpAgentAgentClientProvider: FC<PropsWithChildren> = ({
 
   const container = useMemo<HttpAgentAgentTRPCContextValue>(() => {
     // If the value is an ARN, convert it to a WebSocket URL
-    const wsUrl = agentRuntimeValue.startsWith('arn:')
-      ? buildAgentCoreWsUrl(agentRuntimeValue)
-      : agentRuntimeValue;
+    const wsUrl =
+      typeof agentRuntimeValue === 'string'
+        ? agentRuntimeValue
+        : buildAgentCoreWsUrl(agentRuntimeValue.arn);
 
     const wsClient = createWSClient({
       url: async () => {

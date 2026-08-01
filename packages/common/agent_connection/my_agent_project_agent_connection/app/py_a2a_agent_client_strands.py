@@ -18,7 +18,8 @@ class PyA2aAgentClientStrands:
         if os.environ.get("LOCAL_DEV") == "true":
             return AgentCoreA2aClientStrands.without_auth("http://localhost:9001/")
         config = get_agentcore_runtime_config()
-        agent_runtime_arn = config.get("agentRuntimes", {}).get("PyA2aAgent")
+        agent_runtime = config.get("agentRuntimes", {}).get("PyA2aAgent")
+        agent_runtime_arn = agent_runtime.get("arn") if agent_runtime else None
         if not agent_runtime_arn:
             raise RuntimeError("No connected agent runtime named 'PyA2aAgent' found in runtime configuration.")
         return AgentCoreA2aClientStrands.with_iam_auth(agent_runtime_arn)

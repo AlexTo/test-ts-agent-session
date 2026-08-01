@@ -11,7 +11,7 @@ export class AgentsMcpServerClientStrands {
       });
     }
     const config = await getAgentCoreRuntimeConfig();
-    const agentRuntimeArn = config.agentRuntimes?.['AgentsMcpServer'];
+    const agentRuntimeArn = config.agentRuntimes?.['AgentsMcpServer']?.arn;
     if (!agentRuntimeArn) {
       throw new Error(
         `No connected MCP server runtime named 'AgentsMcpServer' found in runtime configuration.`,

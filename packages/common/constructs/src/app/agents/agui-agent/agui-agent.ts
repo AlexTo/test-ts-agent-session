@@ -78,12 +78,18 @@ export class AguiAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      AguiAgent: this.agentCoreRuntime.agentRuntimeArn,
+      AguiAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
 
     rc.set('connection', 'agentRuntimes', {
       ...rc.get('connection').agentRuntimes,
-      AguiAgent: this.agentCoreRuntime.agentRuntimeArn,
+      AguiAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

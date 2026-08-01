@@ -54,9 +54,9 @@ export const useAguiPyAguiAgent = (): Record<string, AbstractAgent> => {
 
   const url = useMemo(
     () =>
-      agentRuntimeValue.startsWith('arn:')
-        ? buildAgentCoreUrl(agentRuntimeValue)
-        : agentRuntimeValue,
+      typeof agentRuntimeValue === 'string'
+        ? agentRuntimeValue
+        : buildAgentCoreUrl(agentRuntimeValue.arn),
     [agentRuntimeValue],
   );
 

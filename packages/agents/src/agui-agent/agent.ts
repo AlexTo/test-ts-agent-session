@@ -1,7 +1,5 @@
 import { Agent, tool } from '@strands-agents/sdk';
 import {
-  logModelErrors,
-  logToolErrors,
   A2aAgentClientStrands,
   AgentsMcpServerClientStrands,
 } from '@my-agent-project/agent-connection';
@@ -33,7 +31,5 @@ export const getAgent = async () => {
   Refer to tools as your 'spellbook'.`,
     tools: [agentsMcpServer, multiply, a2aAgentTool],
   });
-  logModelErrors(agent);
-  logToolErrors(agent);
   return agent;
 };

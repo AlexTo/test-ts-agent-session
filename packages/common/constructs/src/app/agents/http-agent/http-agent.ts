@@ -78,12 +78,18 @@ export class HttpAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      HttpAgent: this.agentCoreRuntime.agentRuntimeArn,
+      HttpAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
 
     rc.set('connection', 'agentRuntimes', {
       ...rc.get('connection').agentRuntimes,
-      HttpAgent: this.agentCoreRuntime.agentRuntimeArn,
+      HttpAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

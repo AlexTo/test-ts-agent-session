@@ -78,7 +78,10 @@ export class A2aAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      A2aAgent: this.agentCoreRuntime.agentRuntimeArn,
+      A2aAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

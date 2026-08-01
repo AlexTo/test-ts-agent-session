@@ -64,7 +64,10 @@ export class PyAgentsMcpServer
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      PyAgentsMcpServer: this.agentCoreRuntime.agentRuntimeArn,
+      PyAgentsMcpServer: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

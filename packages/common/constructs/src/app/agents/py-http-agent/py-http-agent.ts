@@ -78,12 +78,18 @@ export class PyHttpAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      PyHttpAgent: this.agentCoreRuntime.agentRuntimeArn,
+      PyHttpAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
 
     rc.set('connection', 'agentRuntimes', {
       ...rc.get('connection').agentRuntimes,
-      PyHttpAgent: this.agentCoreRuntime.agentRuntimeArn,
+      PyHttpAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

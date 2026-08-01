@@ -4,8 +4,19 @@ import { getAppConfig } from '@aws-lambda-powertools/parameters/appconfig';
  * Shape of this project's runtime configuration in AppConfig. Keys are the
  * class names of connected target constructs (e.g. `MyAgent`, `MyGateway`).
  */
+export interface AgentRuntimeSession {
+  storage: 's3' | 'none';
+  /** Name of the S3 bucket storing session data. Only set when storage is 's3'. */
+  bucketName?: string;
+}
+
+export interface AgentRuntimeEntry {
+  arn: string;
+  session: AgentRuntimeSession;
+}
+
 export interface AgentCoreRuntimeConfig {
-  agentRuntimes?: Record<string, string>;
+  agentRuntimes?: Record<string, AgentRuntimeEntry>;
   gateways?: Record<string, string>;
 }
 

@@ -23,9 +23,10 @@ export const PyHttpAgentClientContext = createContext<PyHttpAgent | undefined>(
 const useCreatePyHttpAgentClient = (): PyHttpAgent => {
   const runtimeConfig = useRuntimeConfig();
   const agentRuntimeValue = runtimeConfig.agentRuntimes.PyHttpAgent;
-  const apiUrl = agentRuntimeValue.startsWith('arn:')
-    ? buildAgentCoreHttpUrl(agentRuntimeValue)
-    : agentRuntimeValue;
+  const apiUrl =
+    typeof agentRuntimeValue === 'string'
+      ? agentRuntimeValue
+      : buildAgentCoreHttpUrl(agentRuntimeValue.arn);
   const sigv4Client = useSigV4();
   return useMemo(
     () =>

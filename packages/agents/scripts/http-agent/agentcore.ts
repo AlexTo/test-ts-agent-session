@@ -29,7 +29,7 @@ export const resolveRemoteAgent = async (): Promise<
     environment: 'default',
     transform: 'json',
   })) as { agentRuntimes?: Record<string, string> };
-  const arn = config?.agentRuntimes?.['HttpAgent'];
+  const arn = config.agentRuntimes?.['HttpAgent']?.arn;
   if (!arn) {
     throw new Error(
       `No deployed agent named 'HttpAgent' found in runtime configuration (application ${application}).`,

@@ -64,7 +64,10 @@ export class AgentsMcpServer
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      AgentsMcpServer: this.agentCoreRuntime.agentRuntimeArn,
+      AgentsMcpServer: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

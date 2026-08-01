@@ -78,7 +78,10 @@ export class PyA2aAgent extends Construct implements IGrantable, IConnectable {
 
     rc.set('agentcore', 'agentRuntimes', {
       ...rc.get('agentcore').agentRuntimes,
-      PyA2aAgent: this.agentCoreRuntime.agentRuntimeArn,
+      PyA2aAgent: {
+        arn: this.agentCoreRuntime.agentRuntimeArn,
+        session: { storage: 'none' },
+      },
     });
   }
 

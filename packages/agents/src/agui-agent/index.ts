@@ -11,8 +11,13 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { randomUUID } from 'node:crypto';
-import { runWithSessionId } from '@my-agent-project/agent-connection';
+import {
+  ModelErrorLoggingPlugin,
+  ToolErrorLoggingPlugin,
+  runWithSessionId,
+} from '@my-agent-project/agent-connection';
 import { getAgent } from './agent.js';
+import { getSessionManager } from './session.js';
 
 const PORT = parseInt(process.env.PORT || '8080');
 const HOST = '0.0.0.0';
@@ -41,6 +46,8 @@ void (async () => {
     agent,
     name: 'AguiAgent',
     description: 'A Strands Agent exposed via the AG-UI protocol.',
+    plugins: [new ModelErrorLoggingPlugin(), new ToolErrorLoggingPlugin()],
+    config: { sessionManagerProvider: getSessionManager },
   });
 
   // Built up manually (mirroring createStrandsApp's defaults) rather than via createStrandsApp
