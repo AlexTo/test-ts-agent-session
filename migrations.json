@@ -1,0 +1,12 @@
+{
+  "migrations": [
+    {
+      "cli": "nx",
+      "package": "@aws/nx-plugin",
+      "name": "latest-ts-agent-session-management-support",
+      "version": "999.0.0",
+      "description": "My migration",
+      "implementation": "./src/migrations/latest/my-migration/migration"
+    }
+  ]
+}

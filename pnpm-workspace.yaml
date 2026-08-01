@@ -83,3 +83,5 @@ catalog:
   '@tanstack/react-query': 5.101.2
   '@tanstack/react-query-devtools': 5.101.2
   '@trpc/tanstack-react-query': 11.18.0
+overrides:
+  '@aws/nx-plugin': link:../nx-plugin-for-aws/dist/packages/nx-plugin
