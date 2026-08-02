@@ -12,8 +12,10 @@
     "@ag-ui/encoder": "catalog:",
     "@aws-lambda-powertools/parameters": "catalog:",
     "@aws-sdk/client-appconfigdata": "catalog:",
+    "@aws-sdk/client-s3": "catalog:",
     "@aws-sdk/credential-providers": "catalog:",
     "@modelcontextprotocol/sdk": "catalog:",
+    "@my-agent-project/agent-connection": "workspace:*",
     "@strands-agents/sdk": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
@@ -22,8 +24,7 @@
     "express": "catalog:",
     "tslib": "^2.3.0",
     "ws": "catalog:",
-    "zod": "catalog:",
-    "@my-agent-project/agent-connection": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@a2a-js/sdk": "catalog:",

@@ -6,7 +6,7 @@
   "tags": [],
   "metadata": {
     "generator": "ts#project",
-    "ports": [8081, 9000, 8082, 8000],
+    "ports": [8081, 9000, 8082, 8000, 8085, 9002, 8086],
     "components": [
       {
         "generator": "ts#agent",
@@ -42,6 +42,36 @@
         "port": 8000,
         "rc": "AgentsMcpServer",
         "auth": "iam"
+      },
+      {
+        "generator": "ts#agent",
+        "path": "src/s3-http-agent",
+        "name": "s3-http-agent",
+        "port": 8085,
+        "rc": "S3HttpAgent",
+        "auth": "iam",
+        "protocol": "http",
+        "session": "s3"
+      },
+      {
+        "generator": "ts#agent",
+        "path": "src/s3-a2a-agent",
+        "name": "s3-a2a-agent",
+        "port": 9002,
+        "rc": "S3A2aAgent",
+        "auth": "iam",
+        "protocol": "a2a",
+        "session": "s3"
+      },
+      {
+        "generator": "ts#agent",
+        "path": "src/s3-agui-agent",
+        "name": "s3-agui-agent",
+        "port": 8086,
+        "rc": "S3AguiAgent",
+        "auth": "iam",
+        "protocol": "ag-ui",
+        "session": "s3"
       }
     ]
   },
@@ -222,7 +252,10 @@
         "http-agent-dev",
         "a2a-agent-dev",
         "agui-agent-dev",
-        "mcp-server-dev"
+        "mcp-server-dev",
+        "s3-http-agent-dev",
+        "s3-a2a-agent-dev",
+        "s3-agui-agent-dev"
       ],
       "continuous": true
     },
@@ -231,7 +264,10 @@
         "http-agent-docker",
         "a2a-agent-docker",
         "agui-agent-docker",
-        "mcp-server-docker"
+        "mcp-server-docker",
+        "s3-http-agent-docker",
+        "s3-a2a-agent-docker",
+        "s3-agui-agent-docker"
       ]
     },
     "format": {
@@ -428,12 +464,228 @@
         "parallel": false
       }
     },
+    "s3-a2a-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/s3-a2a-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:9002"
+        }
+      }
+    },
+    "s3-a2a-agent-dev": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-a2a-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9002",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "s3-a2a-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/s3-a2a-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/s3-a2a-agent/Dockerfile dist/packages/agents/bundle/agent/s3-a2a-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-s3-a2a-agent:latest dist/packages/agents/bundle/agent/s3-a2a-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "s3-a2a-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-a2a-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "9002"
+        }
+      }
+    },
+    "s3-a2a-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["s3-a2a-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest/image-0.tar my-agent-project-s3-a2a-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-s3-a2a-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "s3-agui-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/s3-agui-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "http://localhost:8086/invocations"
+        }
+      }
+    },
+    "s3-agui-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "s3-a2a-agent-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-agui-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8086",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "s3-agui-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/s3-agui-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/s3-agui-agent/Dockerfile dist/packages/agents/bundle/agent/s3-agui-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-s3-agui-agent:latest dist/packages/agents/bundle/agent/s3-agui-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "s3-agui-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-agui-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8086"
+        }
+      }
+    },
+    "s3-agui-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["s3-agui-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest/image-0.tar my-agent-project-s3-agui-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-s3-agui-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
+    "s3-http-agent-chat": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsx ./scripts/s3-http-agent/chat.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "URL": "ws://localhost:8085/ws"
+        }
+      }
+    },
+    "s3-http-agent-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@my-agent-project/agents"],
+          "target": "s3-a2a-agent-dev"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-http-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8085",
+          "LOCAL_DEV": "true"
+        }
+      }
+    },
+    "s3-http-agent-docker": {
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/bundle/agent/s3-http-agent/Dockerfile"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["bundle"],
+      "options": {
+        "commands": [
+          "ncp packages/agents/src/s3-http-agent/Dockerfile dist/packages/agents/bundle/agent/s3-http-agent/Dockerfile",
+          "docker build --platform linux/arm64 -t my-agent-project-s3-http-agent:latest dist/packages/agents/bundle/agent/s3-http-agent"
+        ],
+        "parallel": false
+      }
+    },
+    "s3-http-agent-serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "commands": ["tsx --watch ./src/s3-http-agent/index.ts"],
+        "cwd": "{projectRoot}",
+        "env": {
+          "PORT": "8085"
+        }
+      }
+    },
+    "s3-http-agent-trivy": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest"
+      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["s3-http-agent-docker"],
+      "options": {
+        "commands": [
+          "rimraf dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest",
+          "make-dir dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest",
+          "ncp packages/agents/.trivyignore dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest/.trivyignore",
+          "docker save -o dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest/image-0.tar my-agent-project-s3-http-agent:latest",
+          "docker run --rm -v \"./dist/packages/agents/trivy/my-agent-project-s3-http-agent-latest\":/scan public.ecr.aws/aquasecurity/trivy:0.72.0 image --input /scan/image-0.tar --ignorefile /scan/.trivyignore --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress -q"
+        ],
+        "parallel": false
+      }
+    },
     "trivy": {
       "dependsOn": [
         "http-agent-trivy",
         "a2a-agent-trivy",
         "agui-agent-trivy",
-        "mcp-server-trivy"
+        "mcp-server-trivy",
+        "s3-http-agent-trivy",
+        "s3-a2a-agent-trivy",
+        "s3-agui-agent-trivy"
       ]
     }
   }

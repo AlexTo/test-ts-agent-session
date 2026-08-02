@@ -30,6 +30,9 @@ catalogs:
     '@aws-sdk/client-appconfigdata':
       specifier: 3.1090.0
       version: 3.1090.0
+    '@aws-sdk/client-s3':
+      specifier: 3.1090.0
+      version: 3.1090.0
     '@aws-sdk/credential-provider-cognito-identity':
       specifier: 3.972.58
       version: 3.972.58
@@ -123,6 +126,9 @@ catalogs:
     agent-chat-cli:
       specifier: 0.3.0
       version: 0.3.0
+    aws-cdk:
+      specifier: 2.1132.0
+      version: 2.1132.0
     aws-cdk-lib:
       specifier: 2.261.0
       version: 2.261.0
@@ -141,6 +147,9 @@ catalogs:
     cors:
       specifier: 2.8.6
       version: 2.8.6
+    esbuild:
+      specifier: 0.28.1
+      version: 0.28.1
     express:
       specifier: 5.2.1
       version: 5.2.1
@@ -180,6 +189,9 @@ catalogs:
     rolldown:
       specifier: 1.2.0
       version: 1.2.0
+    source-map-support:
+      specifier: 0.5.21
+      version: 0.5.21
     tailwind-merge:
       specifier: 3.6.0
       version: 3.6.0
@@ -232,7 +244,7 @@ importers:
         version: link:../nx-plugin-for-aws/dist/packages/nx-plugin
       '@strands-agents/sdk':
         specifier: 'catalog:'
-        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0)))(@modelcontextprotocol/sdk@1.29.0(supports-color@7.2.0)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@7.2.0))(zod@4.4.3)
+        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@7.2.0)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@7.2.0))(zod@4.4.3)
       aws4fetch:
         specifier: 'catalog:'
         version: 1.0.20
@@ -315,6 +327,12 @@ importers:
       agent-chat-cli:
         specifier: 'catalog:'
         version: 0.3.0(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0))
+      aws-cdk:
+        specifier: 'catalog:'
+        version: 2.1132.0
+      esbuild:
+        specifier: 'catalog:'
+        version: 0.28.1
       husky:
         specifier: 'catalog:'
         version: 9.1.7
@@ -365,7 +383,7 @@ importers:
         version: 0.0.4
       '@ag-ui/aws-strands':
         specifier: 'catalog:'
-        version: 0.2.3(@ag-ui/a2ui-toolkit@0.0.4)(@ag-ui/client@0.0.57)(@ag-ui/core@0.0.57)(@ag-ui/encoder@0.0.57)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3))(cors@2.8.6)(express@5.2.1(supports-color@8.1.1))
+        version: 0.2.3(@ag-ui/a2ui-toolkit@0.0.4)(@ag-ui/client@0.0.57)(@ag-ui/core@0.0.57)(@ag-ui/encoder@0.0.57)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3))(cors@2.8.6)(express@5.2.1(supports-color@8.1.1))
       '@ag-ui/client':
         specifier: 'catalog:'
         version: 0.0.57
@@ -381,6 +399,9 @@ importers:
       '@aws-sdk/client-appconfigdata':
         specifier: 'catalog:'
         version: 3.1090.0
+      '@aws-sdk/client-s3':
+        specifier: 'catalog:'
+        version: 3.1090.0
       '@aws-sdk/credential-providers':
         specifier: 'catalog:'
         version: 3.1090.0
@@ -392,7 +413,7 @@ importers:
         version: link:../common/agent-connection
       '@strands-agents/sdk':
         specifier: 'catalog:'
-        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
+        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.18.0(@trpc/server@11.18.0(typescript@6.0.3))(typescript@6.0.3)
@@ -450,7 +471,7 @@ importers:
         version: 1.29.0(supports-color@8.1.1)(zod@4.4.3)
       '@strands-agents/sdk':
         specifier: 'catalog:'
-        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
+        version: 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
       aws4fetch:
         specifier: 'catalog:'
         version: 1.0.20
@@ -503,6 +524,24 @@ importers:
       tw-animate-css:
         specifier: 'catalog:'
         version: 1.4.0
+
+  packages/infra:
+    dependencies:
+      '@my-agent-project/common-constructs':
+        specifier: workspace:*
+        version: link:../common/constructs
+      aws-cdk-lib:
+        specifier: 'catalog:'
+        version: 2.261.0(constructs@10.7.0)
+      constructs:
+        specifier: 'catalog:'
+        version: 10.7.0
+      source-map-support:
+        specifier: 'catalog:'
+        version: 0.5.21
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
 
   packages/website:
     dependencies:
@@ -690,6 +729,10 @@ packages:
       '@middy/core':
         optional: true
 
+  '@aws-sdk/checksums@3.1000.24':
+    resolution: {integrity: sha512-7TWLjypP8kk3savsDBRuhZJx7mBuFFA2136BQhwwLllsAnO4Tmq/p+SXZaNxbuulkzUFz3BZzj0bb4YzexZcNQ==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/client-appconfigdata@3.1090.0':
     resolution: {integrity: sha512-QfjN2aAuCGeoc5OIbdDIkOrTsBFEOiwUkCkWCROHMBgHzF5HU2zfeZ+1JvilSKct+JaZo2kKkQOSO0gP7zvLzw==}
     engines: {node: '>=20.0.0'}
@@ -698,8 +741,16 @@ packages:
     resolution: {integrity: sha512-Ss8HwGUpI2DwEcpueLNLnrIdl7DWXbgp69KZryv/f9OxTKaeK/jCQYqHcvL0fZvZbZ35ZKLZ4V8cP0DnzhucQQ==}
     engines: {node: '>=20.0.0'}
 
+  '@aws-sdk/client-s3@3.1090.0':
+    resolution: {integrity: sha512-R6GX9cd1jljwzZ8xFmgAI/hHCuX1MobIKBdsymv7WL9SENvO9Vgz9KOR6avTnu0Ao+w1LmxnTe+jqmZXEn7Q/Q==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/core@3.977.3':
     resolution: {integrity: sha512-6YZTpF5Zzl0KdSrztM0l6ErKdnXrnnodIDYfayHE9SFfZU8Ubxls7H2XnfWT121jgwiG+WP1z5kyfVDsH5V4qA==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/core@3.977.4':
+    resolution: {integrity: sha512-CEkcQlMOQJCvul60U7wdAOACjtdgFWDsfJI+6wUOGdhGNV2lGbuJpi/R50QLpFG3Tp+sQxa/RmzC3X7KHbhuTA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/credential-provider-cognito-identity@3.972.58':
@@ -752,6 +803,10 @@ packages:
 
   '@aws-sdk/middleware-eventstream@3.972.26':
     resolution: {integrity: sha512-2eIvouTZoxPu5ClHY6ij13De1yhY8Rmllt0dlGeBNXX3wmR7fU1pvMCGb50fKm1GxcuntWK0t1T0cMjTyDoUQA==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/middleware-sdk-s3@3.972.70':
+    resolution: {integrity: sha512-APdP0iODt39AkjCjzTFIoFrxDH/Cz3CpWRDKLcsJg7eOnfE1htkxL9BhDoe/xL7cXdoMwh2HBYv3DiT1uf64NQ==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/middleware-websocket@3.972.46':
@@ -4496,6 +4551,11 @@ packages:
       - semver
       - yaml
       - mime-types
+
+  aws-cdk@2.1132.0:
+    resolution: {integrity: sha512-kcIzBZQO+2v+F97iaeI29fdOUQEx44wr0qDb9HXNqdU82V+1ZKI1KuFlHwH2nq7+6iNc1bu60se4hFf+2d7vXg==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
 
   aws4fetch@1.0.20:
     resolution: {integrity: sha512-/djoAN709iY65ETD6LKCtyyEI04XIBP5xVvfmNxsEP0uJB5tyaGBztSryRr4HqMStr9R06PisQE7m9zDTXKu6g==}
@@ -8262,13 +8322,13 @@ snapshots:
 
   '@ag-ui/a2ui-toolkit@0.0.4': {}
 
-  '@ag-ui/aws-strands@0.2.3(@ag-ui/a2ui-toolkit@0.0.4)(@ag-ui/client@0.0.57)(@ag-ui/core@0.0.57)(@ag-ui/encoder@0.0.57)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3))(cors@2.8.6)(express@5.2.1(supports-color@8.1.1))':
+  '@ag-ui/aws-strands@0.2.3(@ag-ui/a2ui-toolkit@0.0.4)(@ag-ui/client@0.0.57)(@ag-ui/core@0.0.57)(@ag-ui/encoder@0.0.57)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3))(cors@2.8.6)(express@5.2.1(supports-color@8.1.1))':
     dependencies:
       '@ag-ui/a2ui-toolkit': 0.0.4
       '@ag-ui/client': 0.0.57
       '@ag-ui/core': 0.0.57
       '@ag-ui/encoder': 0.0.57
-      '@strands-agents/sdk': 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
+      '@strands-agents/sdk': 1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.29.0(supports-color@8.1.1)(zod@4.4.3)
       cors: 2.8.6
@@ -8369,6 +8429,14 @@ snapshots:
     optionalDependencies:
       '@aws-sdk/client-appconfigdata': 3.1090.0
 
+  '@aws-sdk/checksums@3.1000.24':
+    dependencies:
+      '@aws-sdk/core': 3.977.4
+      '@aws-sdk/types': 3.974.2
+      '@smithy/core': 3.31.1
+      '@smithy/types': 4.16.1
+      tslib: 2.8.1
+
   '@aws-sdk/client-appconfigdata@3.1090.0':
     dependencies:
       '@aws-sdk/core': 3.977.3
@@ -8395,7 +8463,32 @@ snapshots:
       '@smithy/types': 4.16.1
       tslib: 2.8.1
 
+  '@aws-sdk/client-s3@3.1090.0':
+    dependencies:
+      '@aws-sdk/checksums': 3.1000.24
+      '@aws-sdk/core': 3.977.4
+      '@aws-sdk/credential-provider-node': 3.972.75
+      '@aws-sdk/middleware-sdk-s3': 3.972.70
+      '@aws-sdk/signature-v4-multi-region': 3.996.43
+      '@aws-sdk/types': 3.974.2
+      '@smithy/core': 3.31.1
+      '@smithy/fetch-http-handler': 5.6.13
+      '@smithy/node-http-handler': 4.9.13
+      '@smithy/types': 4.16.1
+      tslib: 2.8.1
+
   '@aws-sdk/core@3.977.3':
+    dependencies:
+      '@aws-sdk/types': 3.974.2
+      '@aws-sdk/xml-builder': 3.972.37
+      '@aws/lambda-invoke-store': 0.3.0
+      '@smithy/core': 3.31.1
+      '@smithy/signature-v4': 5.6.12
+      '@smithy/types': 4.16.1
+      bowser: 2.14.1
+      tslib: 2.8.1
+
+  '@aws-sdk/core@3.977.4':
     dependencies:
       '@aws-sdk/types': 3.974.2
       '@aws-sdk/xml-builder': 3.972.37
@@ -8534,6 +8627,15 @@ snapshots:
 
   '@aws-sdk/middleware-eventstream@3.972.26':
     dependencies:
+      '@aws-sdk/types': 3.974.2
+      '@smithy/core': 3.31.1
+      '@smithy/types': 4.16.1
+      tslib: 2.8.1
+
+  '@aws-sdk/middleware-sdk-s3@3.972.70':
+    dependencies:
+      '@aws-sdk/core': 3.977.4
+      '@aws-sdk/signature-v4-multi-region': 3.996.43
       '@aws-sdk/types': 3.974.2
       '@smithy/core': 3.31.1
       '@smithy/types': 4.16.1
@@ -11981,7 +12083,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0)))(@modelcontextprotocol/sdk@1.29.0(supports-color@7.2.0)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@7.2.0))(zod@4.4.3)':
+  '@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@7.2.0)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@7.2.0))(zod@4.4.3)':
     dependencies:
       '@aws-sdk/client-bedrock-runtime': 3.1098.0
       '@modelcontextprotocol/sdk': 1.29.0(supports-color@7.2.0)(zod@4.4.3)
@@ -11992,10 +12094,11 @@ snapshots:
       zod: 4.4.3
     optionalDependencies:
       '@a2a-js/sdk': 0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@7.2.0))
+      '@aws-sdk/client-s3': 3.1090.0
       '@smithy/types': 4.16.1
       express: 5.2.1(supports-color@7.2.0)
 
-  '@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)':
+  '@strands-agents/sdk@1.10.0(@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1)))(@aws-sdk/client-s3@3.1090.0)(@modelcontextprotocol/sdk@1.29.0(supports-color@8.1.1)(zod@4.4.3))(@opentelemetry/api@1.9.1)(@smithy/types@4.16.1)(express@5.2.1(supports-color@8.1.1))(zod@4.4.3)':
     dependencies:
       '@aws-sdk/client-bedrock-runtime': 3.1098.0
       '@modelcontextprotocol/sdk': 1.29.0(supports-color@8.1.1)(zod@4.4.3)
@@ -12006,6 +12109,7 @@ snapshots:
       zod: 4.4.3
     optionalDependencies:
       '@a2a-js/sdk': 0.3.14(@bufbuild/protobuf@2.13.0)(express@5.2.1(supports-color@8.1.1))
+      '@aws-sdk/client-s3': 3.1090.0
       '@smithy/types': 4.16.1
       express: 5.2.1(supports-color@8.1.1)
 
@@ -12949,6 +13053,8 @@ snapshots:
       '@aws-cdk/asset-node-proxy-agent-v6': 2.1.2
       '@aws-cdk/cloud-assembly-schema': 54.15.0
       constructs: 10.7.0
+
+  aws-cdk@2.1132.0: {}
 
   aws4fetch@1.0.20: {}
 

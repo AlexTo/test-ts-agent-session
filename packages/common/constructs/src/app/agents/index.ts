@@ -1,3 +1,6 @@
+export * from './s3-agui-agent/s3-agui-agent.js';
+export * from './s3-a2a-agent/s3-a2a-agent.js';
+export * from './s3-http-agent/s3-http-agent.js';
 export * from './py-agui-agent/py-agui-agent.js';
 export * from './py-a2a-agent/py-a2a-agent.js';
 export * from './py-http-agent/py-http-agent.js';

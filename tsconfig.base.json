@@ -43,6 +43,9 @@
       ],
       "@my-agent-project/agents/*": [
         "./packages/agents/*"
+      ],
+      "@my-agent-project/infra": [
+        "./packages/infra/src/index.ts"
       ]
     }
   }
