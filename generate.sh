@@ -44,3 +44,14 @@ pnpm exec nx generate @aws/nx-plugin:connection --sourceProject=@my-agent-projec
 # Website -> Python AGUI / Website -> Python HTTP
 pnpm exec nx generate @aws/nx-plugin:connection --sourceProject=@my-agent-project/website --targetProject=my_agent_project.py_agents --targetComponent=py-agui-agent --no-interactive
 pnpm exec nx generate @aws/nx-plugin:connection --sourceProject=@my-agent-project/website --targetProject=my_agent_project.py_agents --targetComponent=py-http-agent --no-interactive
+
+# Agents with S3 session
+
+pnpm exec nx generate @aws/nx-plugin:ts#agent --project=@my-agent-project/agents --name=S3HttpAgent --session=s3 --no-interactive
+pnpm exec nx generate @aws/nx-plugin:ts#agent --project=@my-agent-project/agents --protocol=a2a --name=S3A2aAgent --session=s3 --no-interactive
+pnpm exec nx generate @aws/nx-plugin:ts#agent --project=@my-agent-project/agents --protocol=ag-ui --name=S3AguiAgent --session=s3 --no-interactive
+
+pnpm exec nx generate @aws/nx-plugin:connection --sourceProject=@my-agent-project/agents --targetProject=@my-agent-project/agents --sourceComponent=s3-agui-agent --targetComponent=s3-a2a-agent --no-interactive
+pnpm exec nx generate @aws/nx-plugin:connection --sourceProject=@my-agent-project/agents --targetProject=@my-agent-project/agents --sourceComponent=s3-http-agent --targetComponent=s3-a2a-agent --no-interactive
+
+pnpm exec nx generate @aws/nx-plugin:ts#infra --name=infra --no-interactive
